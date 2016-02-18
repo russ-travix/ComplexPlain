@@ -96,19 +96,25 @@ namespace Mandel.Fractals
 
 			this.MouseClick += (s, a) =>
 				{
-					Complex juliaSeed = resultMap[a.X, a.Y].Complex;
+					if (ComplexFunc.AllowJulia)
+					{
+						Complex juliaSeed = resultMap[a.X, a.Y].Complex;
 
-					var preview = GenerateJulia(64, 64, juliaSeed, 64);
-					this.Cursor = ToCursor(preview);
+						var preview = GenerateJulia(64, 64, juliaSeed, 64);
+						this.Cursor = ToCursor(preview);
+					}
 				};
 
 			this.MouseDoubleClick += (s, a) =>
 				{
-					Complex juliaSeed = resultMap[a.X, a.Y].Complex;
-					var julia = GenerateJulia(this.width, this.height, juliaSeed);
+					if (ComplexFunc.AllowJulia)
+					{
+						Complex juliaSeed = resultMap[a.X, a.Y].Complex;
+						var julia = GenerateJulia(this.width, this.height, juliaSeed);
 
-					this.BackgroundImage = julia;
-					backgroundIsJulia = true;
+						this.BackgroundImage = julia;
+						backgroundIsJulia = true;
+					}
 				};
 
 			this.MouseMove += (s, a) =>

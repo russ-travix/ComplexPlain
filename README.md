@@ -6,6 +6,7 @@ A framework for experimenting with visualising the Complex plane and various oth
 The top functions are for generating fractal style images using the selected algorithm in the drop down list.
 When a fractal is rendered, you can drag a rectangle and press Z to zoom on that area of the complex plain.
  * Press ESC to reset to the default parameters.
+
 Pressing L will let you load a new colour map, see the Maps folder in the root of the repository for some examples
 If the selected Algorithm is a Mandlebrot function, you may be able to see it's corresponding Julia set for each point in the plain.
 To do this, single-click and the cursor will change into a preview of that area, double-clicking will generate the whole julia set to the window. Press escape to cancel the full screen view, and again to reset the cursor.

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Numerics;
 using System.Reflection;
 using System.Threading;
@@ -204,12 +205,37 @@ namespace Mandel.Fractals
 							OnClientSizeChanged(s, a);
 							
 							break;
+						case Keys.B:
+							SaveBackgroundImage(ImageFormat.Bmp);
+							break;
+						case Keys.S:
+							SaveBackgroundImage(ImageFormat.Png);
+							break;
 
 						case Keys.Z:
 							this.OnClientSizeChanged(s, a);
 							break;
 					}
 				};
+		}
+
+		private void SaveBackgroundImage(ImageFormat format)
+		{
+			using (SaveFileDialog fsave = new SaveFileDialog())
+			{
+				fsave.FileName = string.Format("screenshot_{0}.{1}", DateTime.Now.Ticks, format.ToString());
+				fsave.AutoUpgradeEnabled = true;
+				fsave.InitialDirectory = System.Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+
+				if (fsave.ShowDialog() == DialogResult.OK)
+				{
+					using (StreamWriter sw = new StreamWriter(fsave.FileName))
+					{
+						this.BackgroundImage.Save(sw.BaseStream, format);
+					}
+				}
+			}
+
 		}
 
 		private Rectangle ResizeRectangle(Point endPoint)

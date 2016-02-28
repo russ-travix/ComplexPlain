@@ -2,13 +2,9 @@
 using System.Numerics;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Forms;
 using System.Windows.Media;
-using System.Windows.Input;
-
 using Mandel.Bitmaps;
-
-using HorizontalAlignment = System.Windows.HorizontalAlignment;
+using Mandel.ComplexNumbers;
 
 namespace Mandel.Fractals
 {

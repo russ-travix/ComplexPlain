@@ -5,8 +5,8 @@ using System.IO;
 using System.Numerics;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-
 using Mandel.Colours;
 
 namespace Mandel.Fractals
@@ -102,7 +102,7 @@ namespace Mandel.Fractals
 						Complex juliaSeed = resultMap[a.X, a.Y].Complex;
 
 						var preview = GenerateJulia(64, 64, juliaSeed, 64);
-						this.Cursor = ToCursor(preview);
+						//this.Cursor = ToCursor(preview);
 					}
 				};
 
@@ -208,6 +208,7 @@ namespace Mandel.Fractals
 						case Keys.B:
 							SaveBackgroundImage(ImageFormat.Bmp);
 							break;
+
 						case Keys.S:
 							SaveBackgroundImage(ImageFormat.Png);
 							break;
@@ -225,7 +226,7 @@ namespace Mandel.Fractals
 			{
 				fsave.FileName = string.Format("screenshot_{0}.{1}", DateTime.Now.Ticks, format.ToString());
 				fsave.AutoUpgradeEnabled = true;
-				fsave.InitialDirectory = System.Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+				fsave.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
 
 				if (fsave.ShowDialog() == DialogResult.OK)
 				{
@@ -368,6 +369,11 @@ namespace Mandel.Fractals
 			this.BeginInvoke(new SetNewBitmapDelegate(SetNewBitmap), finalBitmap);
 		}
 
+		private async Task<ComplexResult> ProcessFunc(Complex c, int x, int y, int pixelCounter)
+		{
+			return await Task.FromResult(ComplexFunc.Function.Invoke(c, x, y, pixelCounter));
+		}
+
 		private void thread_Proc(object args)
 		{
 			try
@@ -400,7 +406,9 @@ namespace Mandel.Fractals
 
 							zoomMap[x, y] = c;
 
-							var result = ComplexFunc.Function.Invoke(c, x, y, pixelCounter++);
+							Func<Task<ComplexResult>> task = async () => await ProcessFunc(c, x, y, pixelCounter++);
+
+							ComplexResult result = task.Invoke().Result;
 
 							//if (x >= complexMap.GetLength(0) || y >= complexMap.GetLength(1))
 							//{
@@ -439,7 +447,9 @@ namespace Mandel.Fractals
 
 							zoomMap[x, y] = c;
 
-							var result = ComplexFunc.Function.Invoke(c, x, y, pixelCounter++);
+							Func<Task<ComplexResult>> task = async () => await ProcessFunc(c, x, y, pixelCounter++);
+
+							ComplexResult result = task.Invoke().Result;
 
 							//if (x >= complexMap.GetLength(0) || y >= complexMap.GetLength(1))
 							//{

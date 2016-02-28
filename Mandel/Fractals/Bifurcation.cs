@@ -1,5 +1,4 @@
 ﻿using System.Windows.Media;
-
 using Mandel.Bitmaps;
 
 namespace Mandel.Fractals

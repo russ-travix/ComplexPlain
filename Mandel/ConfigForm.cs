@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 
 using Mandel.Colours;
+using Mandel.ComplexNumbers;
 using Mandel.DX;
 using Mandel.DiamondSquare;
 using Mandel.DivisorDrips;
@@ -52,11 +53,12 @@ namespace Mandel
 
 		private void btnBuddha_Click(object sender, EventArgs e)
 		{
-			//BuddhaBrot brot = new BuddhaBrot();
-			//brot.Show();
+			BuddhaBrot brot = new BuddhaBrot
+			{
+				Palette = palette
+			};
 
-			BBrot bb = new BBrot();
-			bb.Render();
+			brot.Show();
 		}
 
 		private void btnPalette_Click(object sender, EventArgs e)

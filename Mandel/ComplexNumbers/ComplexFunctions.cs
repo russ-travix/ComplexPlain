@@ -1,14 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
+using Mandel.Fractals;
 
-namespace Mandel
+namespace Mandel.ComplexNumbers
 {
 	public static class ComplexFunctions
 	{
 		public static double Mag(this Complex c)
 		{
 			return (c.Real * c.Real) + (c.Imaginary * c.Imaginary);
+		}
+
+		public static Complex Iterate(this Complex z, Complex c)
+		{
+			return z*z + c;
+		}
+
+		public static Complex IterateThree(this Complex z, Complex c)
+		{
+			return z*z*z + c;
+		}
+
+		public static Complex ComplexFromCartesian(this Complex c, int x, int y,double scaleX, double scaleY)
+		{
+			var real = c.Real + x*scaleX;
+			var imag = c.Imaginary + y*scaleY;
+
+			return new Complex(real, imag);
 		}
 
 		public static List<ComplexFunction> Functions { get; set; }
@@ -27,25 +46,24 @@ namespace Mandel
 					Label = "Collatz (HSV)",
 					Function = (c, px, py, p) =>
 							{
-								bool inset = true;
+								var inset = true;
 
-								int iteration = 1;
+								var iteration = 1;
 
-								Complex z = c;
+								var z = c;
 
 								if (z.Mag() > 16384)
 								{
 									inset = false;
 								}
 
-								double cosR, cosI, tmpR, tmpI;
 								while (inset && iteration < MaxCollatzIterations)
 								{
-									cosR = Math.Cos(Math.PI * z.Real) * Math.Cosh(Math.PI * z.Imaginary);
-									cosI = -( Math.Sin(Math.PI * z.Real) ) * Math.Sinh(Math.PI * z.Imaginary);
+									var cosR = Math.Cos(Math.PI * z.Real) * Math.Cosh(Math.PI * z.Imaginary);
+									var cosI = -( Math.Sin(Math.PI * z.Real) ) * Math.Sinh(Math.PI * z.Imaginary);
 
-									tmpR = z.Real * cosR - z.Imaginary * cosI;
-									tmpI = z.Real * cosI + z.Imaginary * cosR;
+									var tmpR = z.Real * cosR - z.Imaginary * cosI;
+									var tmpI = z.Real * cosI + z.Imaginary * cosR;
 
 									z = new Complex(
 										(2 + 7 * z.Real - 2 * cosR - 5 * tmpR) / 4,
@@ -73,25 +91,24 @@ namespace Mandel
 					Label = "Collatz (Dwell)",
 					Function = (c, px, py, p) =>
 							{
-								bool inset = true;
+								var inset = true;
 
-								int iteration = 1;
+								var iteration = 1;
 
-								Complex z = c;
+								var z = c;
 
 								if (z.Mag() > 16384)
 								{
 									inset = false;
 								}
 
-								double cosR, cosI, tmpR, tmpI;
 								while (inset && iteration < MaxCollatzIterations)
 								{
-									cosR = Math.Cos(Math.PI * z.Real) * Math.Cosh(Math.PI * z.Imaginary);
-									cosI = -( Math.Sin(Math.PI * z.Real) ) * Math.Sinh(Math.PI * z.Imaginary);
+									var cosR = Math.Cos(Math.PI * z.Real) * Math.Cosh(Math.PI * z.Imaginary);
+									var cosI = -( Math.Sin(Math.PI * z.Real) ) * Math.Sinh(Math.PI * z.Imaginary);
 
-									tmpR = z.Real * cosR - z.Imaginary * cosI;
-									tmpI = z.Real * cosI + z.Imaginary * cosR;
+									var tmpR = z.Real * cosR - z.Imaginary * cosI;
+									var tmpI = z.Real * cosI + z.Imaginary * cosR;
 
 									z = new Complex(
 										(2 + 7 * z.Real - 2 * cosR - 5 * tmpR) / 4,
@@ -118,9 +135,9 @@ namespace Mandel
 					Label = "Collatz chain experiment",
 					Function = (c, px, py, p) =>
 						{
-							int iteration = 1;
+							var iteration = 1;
 							
-							int root = p;
+							var root = p;
 
 							while (root != 1 && iteration++ < MaxIterations)
 							{
@@ -133,7 +150,7 @@ namespace Mandel
 									root = root * 3 + 1;
 								}
 							}
-							ComplexResult result = new ComplexResult(Complex.Zero) { Dwell = iteration < MaxIterations ? iteration : 0 };
+							var result = new ComplexResult(Complex.Zero) { Dwell = iteration < MaxIterations ? iteration : 0 };
 							return result;
 						},
 						UseDwell = true,
@@ -158,15 +175,15 @@ namespace Mandel
 						Function = (c, px, py, p) =>
 							{
 								int iteration;
-								Complex z = new Complex();
+								var z = new Complex();
 								for (iteration = 0; iteration < MaxIterations; iteration++)
 								{
-									z = z * z + c;
+									z = z.Iterate(c);
 									if (z.Magnitude >= 4.0)
 										break;
 								}
 
-								ComplexResult result = new ComplexResult(z) { Dwell = iteration < MaxIterations ? iteration : 0 };
+								var result = new ComplexResult(z) { Dwell = iteration < MaxIterations ? iteration : 0 };
 								return result;
 							},
 						UseDwell = true,
@@ -180,12 +197,12 @@ namespace Mandel
 						Function = (c, px, py, p) =>
 							{
 								int iteration;
-								Complex z = new Complex();
-								Complex oz = new Complex();
+								var z = new Complex();
+								var oz = new Complex();
 
 								for (iteration = 0; iteration < MaxIterations; iteration++)
 								{
-									z = z * z + c;
+									z = z.Iterate(c);
 									if (z.Magnitude >= 4.0)
 										break;
 									
@@ -198,7 +215,7 @@ namespace Mandel
 									oz = z;
 								}
 
-								ComplexResult result = new ComplexResult(z) { Dwell = iteration < MaxIterations ? iteration : 0 };
+								var result = new ComplexResult(z) { Dwell = iteration < MaxIterations ? iteration : 0 };
 								return result;
 							},
 						UseDwell = true,
@@ -212,12 +229,12 @@ namespace Mandel
 						Function = (c, px, py, p) =>
 							{
 								int iteration;
-								Complex z = new Complex();
-								Complex oz = new Complex();
+								var z = new Complex();
+								var oz = new Complex();
 
 								for (iteration = 0; iteration < MaxIterations; iteration++)
 								{
-									z = z * z + c;
+									z = z.Iterate(c);
 									if (z.Magnitude >= 4.0)
 										break;
 									
@@ -230,7 +247,7 @@ namespace Mandel
 									oz = z;
 								}
 
-								ComplexResult result = new ComplexResult(z) { Dwell = iteration < MaxIterations ? iteration : 0 };
+								var result = new ComplexResult(z) { Dwell = iteration < MaxIterations ? iteration : 0 };
 								return result;
 							},
 						UseDwell = true,
@@ -245,11 +262,11 @@ namespace Mandel
 						Function = (c, px, py, p) =>
 							{
 								int iteration;
-								Complex z = new Complex();
+								var z = new Complex();
 								for (iteration = 0; iteration < MaxIterations; iteration++)
 								{
-									z = z * z + c;
-									if (z.Magnitude >= 2.0)
+									z = z.Iterate(c);
+									if (z.Magnitude >= 4.0)
 										break;
 								}
 
@@ -266,16 +283,14 @@ namespace Mandel
 						Function = (c, px, py, p) =>
 							{
 								int iteration;
-								Complex z = new Complex();
+								var z = new Complex();
 								for (iteration = 0; iteration < MaxIterations; iteration++)
 								{
-									z = z * z + c;
-									if (z.Magnitude >= 2.0)
+									z = z.Iterate(c);
+									if (z.Magnitude >= 4.0)
 										break;
 								}
 
-								//ComplexResult result = new ComplexResult(z) { Dwell = iteration < MaxIterations ? (int)Math.Tan(c.Magnitude + z.Magnitude): 0 };
-								//return result;
 								return iteration < MaxIterations ? new Complex(c.Phase, z.Phase) : new Complex();
 							},
 						Min = new Complex(-2, -1.21),
@@ -287,10 +302,11 @@ namespace Mandel
 						Function = (c, px, py, p) =>
 							{
 								int iteration;
-								Complex z = new Complex();
+								var z = new Complex();
 								for (iteration = 0; iteration < MaxIterations; iteration++)
 								{
-									z = z * z + c;
+									z = z.Iterate(c);
+
 									if (z.Magnitude >= 4.0)
 										break;
 								}
@@ -307,7 +323,7 @@ namespace Mandel
 						Function = (c, px, py, p) =>
 							{
 								int iteration;
-								Complex z = new Complex();
+								var z = new Complex();
 								for (iteration = 0; iteration < MaxIterations; iteration++)
 								{
 									z = z.AbsSquare() + c;
@@ -316,7 +332,7 @@ namespace Mandel
 										break;
 								}
 
-								ComplexResult result = new ComplexResult(z) { Dwell = iteration < MaxIterations ? iteration : 0 };
+								var result = new ComplexResult(z) { Dwell = iteration < MaxIterations ? iteration : 0 };
 								return result;
 							},
 						UseDwell = true,
@@ -330,7 +346,7 @@ namespace Mandel
 						Function = (c, px, py, p) =>
 							{
 								int iteration;
-								Complex z = new Complex();
+								var z = new Complex();
 								for (iteration = 0; iteration < MaxIterations; iteration++)
 								{
 									z = z.AbsSquare() + c;
@@ -339,7 +355,6 @@ namespace Mandel
 										break;
 								}
 
-								//kComplexResult result = new ComplexResult(z) { Dwell = iteration < MaxIterations ? iteration : 0 };
 								return z;
 							},
 						AllowJulia = true
@@ -349,12 +364,12 @@ namespace Mandel
 						Label = "Newton ^3",
 						Function = (c, px, py, p) =>
 								{
-									const int NumRoots = 5;
+									const int numRoots = 5;
 								
-									Complex z = c;
+									var z = c;
 									Complex epsilon;
 
-									int iter = 0;
+									var iter = 0;
 									do
 									{
 										if (++iter > MaxIterations)
@@ -362,7 +377,7 @@ namespace Mandel
 											break;
 										}
 
-										epsilon = Complex.Pow(z, NumRoots - 1) / NumRoots * Complex.Pow(z, NumRoots - 1);
+										epsilon = Complex.Pow(z, numRoots - 1) / numRoots * Complex.Pow(z, numRoots - 1);
 										z += epsilon;
 
 									} while (epsilon.Magnitude > 0.0001);
@@ -380,21 +395,19 @@ namespace Mandel
 						Function = (c, px, py, p) =>
 								{
 									double xold = 0.0, yold = 0.0;
-									double xsqr, ysqr;
-									double denom;
 
-									double x = c.Real;
-									double y = c.Imaginary;
+									var x = c.Real;
+									var y = c.Imaginary;
 
-									bool flag = false;
+									var flag = false;
 
 									int i;
 									for (i = 0; i < 512 && !flag; i++)
 									{
-										xsqr = x * x;
-										ysqr = y * y;
+										var xsqr = x * x;
+										var ysqr = y * y;
 
-										denom = 3.0 * ( ( xsqr - ysqr ) * ( xsqr - ysqr ) + 4.0 * xsqr * ysqr );
+										var denom = 3.0 * ( ( xsqr - ysqr ) * ( xsqr - ysqr ) + 4.0 * xsqr * ysqr );
 
 										if (denom == 0)
 										{
@@ -422,21 +435,19 @@ namespace Mandel
 						Function = (c, px, py, p) =>
 								{
 									double xold = 0.0, yold = 0.0;
-									double xsqr, ysqr;
-									double denom;
 
-									double x = c.Real;
-									double y = c.Imaginary;
+									var x = c.Real;
+									var y = c.Imaginary;
 
-									bool flag = false;
+									var flag = false;
 
 									int i;
 									for (i = 0; i < 512 && !flag; i++)
 									{
-										xsqr = x * x;
-										ysqr = y * y;
+										var xsqr = x * x;
+										var ysqr = y * y;
 
-										denom = 3.0 * ( ( xsqr - ysqr ) * ( xsqr - ysqr ) + 4.0 * xsqr * ysqr );
+										var denom = 3.0 * ( ( xsqr - ysqr ) * ( xsqr - ysqr ) + 4.0 * xsqr * ysqr );
 
 										if (denom == 0)
 										{
@@ -463,15 +474,15 @@ namespace Mandel
 						Function = (c, px, py, p) =>
 							{
 								int iteration;
-								Complex z = new Complex();
+								var z = new Complex();
 								for (iteration = 0; iteration < MaxIterations; iteration++)
 								{
-									z = z * z * z + c;
+									z = z.IterateThree(c);
 									if (z.Magnitude >= 4.0)
 										break;
 								}
 
-								ComplexResult result = new ComplexResult(z) { Dwell = iteration < MaxIterations ? iteration : 0 };
+								var result = new ComplexResult(z) { Dwell = iteration < MaxIterations ? iteration : 0 };
 								return result;
 							},
 						UseDwell = true,
@@ -483,7 +494,7 @@ namespace Mandel
 						Function = (c, px, py, p) =>
 							{
 								int iteration;
-								Complex z = new Complex();
+								var z = new Complex();
 								for (iteration = 0; iteration < MaxIterations; iteration++)
 								{
 									z = z * z + c;
@@ -491,7 +502,7 @@ namespace Mandel
 										break;
 								}
 
-								ComplexResult result = new ComplexResult(z) { Dwell = iteration < MaxIterations ? iteration % 2 == 0 ? 0 : 255 : 0 };
+								var result = new ComplexResult(z) { Dwell = iteration < MaxIterations ? iteration % 2 == 0 ? 0 : 255 : 0 };
 								return result;
 							},
 						UseDwell = true,
@@ -502,8 +513,8 @@ namespace Mandel
 						Label = "Mandelbrot - Parameter plane",
 						Function = (c, px, py, p) =>
 							{
-								Complex z = new Complex();
-								for (int i = 0; i < 7; i++)
+								var z = new Complex();
+								for (var i = 0; i < 7; i++)
 								{
 									z = z * z + c;
 								}
@@ -553,7 +564,7 @@ namespace Mandel
 						Label	= "(z^2-1)(z-2-i)^2/(z^2+2+2i)",
 						Function = (c, px, py, p) =>
 							{
-								Complex zs = (c - 2.0) - Complex.ImaginaryOne;
+								var zs = (c - 2.0) - Complex.ImaginaryOne;
 								return ( ( c * c - 1.0 ) * zs * zs / ( c * c + 2.0 + 2.0 * Complex.ImaginaryOne ) );
 							},
 						Min = new Complex(-4, -4),
@@ -579,7 +590,7 @@ namespace Mandel
 						Label	= "f(5)(z) - 1+i * sin z",
 						Function = (c, px, py, p) =>
 								{
-									for (int i = 0; i < 5; i++)
+									for (var i = 0; i < 5; i++)
 									{
 										c = ( 1 + c.Imaginary ) * Complex.Sin(c);
 									}
@@ -594,9 +605,9 @@ namespace Mandel
 						Label	= "z * z - constant c (Julia)",
 						Function = (c, px, py, p) =>
 								{
-									Complex complex = new Complex(0.75, 0.2);
+									var complex = new Complex(0.75, 0.2);
 
-									for (int i = 0; i < 50; i++)
+									for (var i = 0; i < 50; i++)
 									{
 										complex = complex * complex - complex;
 
@@ -672,50 +683,3 @@ namespace Mandel
 		}
 	}
 }
-
-//private void parmPlane_Proc(object args)
-//{
-//	Size size = (Size) args;
-//	Bitmap finalBitmap = new Bitmap(size.Width, size.Height, PixelFormat.Format24bppRgb);
-
-//	//double CxMin = -2.2;
-//	//double CxMax = 1.0;
-//	//double CyMin = -1.4;
-//	//double CyMax = 1.4;
-
-//	double pixWid = ( CxMax - CxMin ) / size.Width;
-//	double pixHgt = ( CyMax - CyMin ) / size.Height;
-
-//	for (int y = 0; y < size.Height; y++)
-//	{
-//		double compleY = CyMin + y * pixHgt;
-//		if (Math.Abs(compleY) < pixHgt / 2)
-//		{
-//			compleY = 0.0;
-//		}
-
-//		for (int x = 0; x < size.Width; x++)
-//		{
-//			double compleX = CxMin + x * pixWid;
-
-//			Complex c = new Complex(compleX, compleY);
-
-//			Complex z = new Complex();
-
-//			for (int i = 0; i < 5; i++)
-//			{
-//				z = z * z + c;
-//			}
-
-//			if (z.Real > 0 && z.Imaginary > 0) finalBitmap.SetPixel(x, y, Color.FromArgb(50,50,50));
-//			if (z.Real < 0 && z.Imaginary < 0) finalBitmap.SetPixel(x, y, Color.FromArgb(150, 150, 150));
-//			if (z.Real < 0 && z.Imaginary > 0) finalBitmap.SetPixel(x, y, Color.FromArgb(100, 100, 100));
-//			if (z.Real > 0 && z.Imaginary < 0) finalBitmap.SetPixel(x, y, Color.FromArgb(200, 200, 200));
-
-//			//finalBitmap.SetPixel(x, y, ColourMap.ComplexToColour(z));
-
-//		}
-//	}
-
-//	this.BeginInvoke(new SetNewBitmapDelegate(SetNewBitmap), finalBitmap);
-//}

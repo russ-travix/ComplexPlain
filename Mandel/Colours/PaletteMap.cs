@@ -7,7 +7,7 @@ namespace Mandel.Colours
 {
 	public class PaletteMap
 	{
-		private List<Color> colors;
+		private readonly List<Color> colors;
 
 		public List<Color> Colors
 		{
@@ -23,7 +23,7 @@ namespace Mandel.Colours
 		{
 			colors = new List<Color>();
 
-			//for (int i = 255; i > -1; i--)
+			// Default to a grayscale palette
 			for (int i = 0; i < 256; i++ )
 			{
 				colors.Add(Color.FromArgb(255, i, i, i));
